@@ -42,6 +42,7 @@ public class Ship {
 
         if(spaceRect.intersect(bulletRect)) {
             Log.d("vasanth","collided");
+            b.killbullet();
             return true;
         }
         else{

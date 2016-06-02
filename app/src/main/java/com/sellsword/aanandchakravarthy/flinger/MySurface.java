@@ -43,8 +43,8 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             ships.add(tempship);
             myholder = sholder;
             myContext = context;
-            mBackgroundImage = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.earthrise);
+            //mBackgroundImage = BitmapFactory.decodeResource(context.getResources(),
+            //        R.drawable.earthrise);
         }
         public void startwork(){
 
@@ -83,12 +83,15 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
         float x=10,y=50;
         public void fireBullet(){
-            Bullet b = new Bullet(screenheight,screenwidth);
-            synchronized (bullets) {
-                bullets.add(b);
+            if(bullet == null || bullet.isAlive() == false ) {
+                bullet = new Bullet(screenheight, screenwidth);
+                synchronized (bullets) {
+                    bullets.add(bullet);
+                }
             }
         }
         GunShip gun = null;
+        private Bullet bullet = null;
         private List<Ship> ships = new ArrayList<Ship>();
         private ArrayList<Bullet>  bullets = new ArrayList<Bullet>();
         private void doDraw(Canvas mycanvas){
@@ -107,9 +110,12 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             mycanvas.drawText("Score : "+score,screenwidth-150,screenheight-100,white);
             //mycanvas.drawText("Score : "+score,
             ArrayList<Ship> deadShips = new ArrayList<Ship>();
+            ArrayList<Bullet> deadBullets = new ArrayList<Bullet>();
             synchronized (ships) {
             for(Ship s:ships) {
                 s.moveShipAndDraw(mycanvas,bullets);
+
+
                 if(s.y > screenheight){
                     //Game over
                     white.setTextSize(50);
@@ -133,8 +139,12 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             synchronized (bullets) {
                 for (Bullet b : bullets) {
                     b.moveBulletAndDraw(mycanvas);
+                    if(b.isAlive() == false){
+                        deadBullets.add(b);
+                    }
                 }
             }
+                bullets.removeAll(deadBullets);
             Ship newship = null;
             for(Ship s:ships){
                 if(s.readyForNextShip()){
