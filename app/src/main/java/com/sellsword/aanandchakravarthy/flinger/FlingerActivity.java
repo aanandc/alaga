@@ -1,5 +1,6 @@
 package com.sellsword.aanandchakravarthy.flinger;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.media.AudioAttributes;
@@ -11,8 +12,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
 
-public class FlingerActivity extends AppCompatActivity {
+public class FlingerActivity extends Activity {
     AudioAttributes attrs = new AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_GAME)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -28,6 +31,7 @@ MySurface mySurface;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         /*ProgressDialog dialog=new ProgressDialog(this);
         dialog.setMessage("loading in progress");
         dialog.setCancelable(false);
@@ -37,7 +41,9 @@ MySurface mySurface;
         mySurface = new MySurface(this);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //setContentView(R.layout.activity_flinger);
-
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(mySurface);
         Log.d("vasanth","oncreate completed");
         //dialog.hide();

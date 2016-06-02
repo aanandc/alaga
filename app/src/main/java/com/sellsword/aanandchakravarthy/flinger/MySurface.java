@@ -93,19 +93,30 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         private ArrayList<Bullet>  bullets = new ArrayList<Bullet>();
         private void doDraw(Canvas mycanvas){
             Paint black = new Paint();
+            Paint white = new Paint();
             black.setAntiAlias(true);
+            white.setAntiAlias(true);
             black.setARGB(255, 0, 0, 0);
+            white.setARGB(128,255,255,255);
+            white.setTextSize(30);//Avoid hardcoding, do based on screen size
             //mycanvas.drawBitmap(mBackgroundImage, 0, 0, null);
             //Log.d("vasanth","screenheight is " + screenheight + "screenwidth is " + screenwidth);
             mycanvas.drawRect(0,0,screenwidth,screenheight,black);
             gun.drawGun(mycanvas);
+
+            mycanvas.drawText("Score : "+score,screenwidth-150,screenheight-100,white);
+            //mycanvas.drawText("Score : "+score,
             ArrayList<Ship> deadShips = new ArrayList<Ship>();
             synchronized (ships) {
             for(Ship s:ships) {
                 s.moveShipAndDraw(mycanvas,bullets);
                 if(s.y > screenheight){
                     //Game over
+                    white.setTextSize(50);
+                    mycanvas.drawRect(0,0,screenwidth,screenheight,black);
+                    mycanvas.drawText("Game Over", screenwidth/3,screenheight/2,white);
                     mythread.stopwork();
+
                 }
                 //Add to dead list if ship is dead
                 if(s.dead){
@@ -146,7 +157,7 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
                 y = y + 100;
             }
             try {
-                Thread.sleep(50);
+                Thread.sleep(30);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

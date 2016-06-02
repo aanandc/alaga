@@ -11,7 +11,7 @@ public class GunShip extends Ship {
    public GunShip(int sheight,int swidth){
     super(sheight,swidth);
        x = swidth / 2;
-       y = sheight - 200;
+       y = sheight - 50;
        size = 5;
    }
     private void drawShip(Canvas mycanvas, float x, float y,int size){

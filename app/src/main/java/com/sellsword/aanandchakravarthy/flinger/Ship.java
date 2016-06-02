@@ -70,6 +70,7 @@ public class Ship {
             }
         }
         x = x + (direction * 10);
+        y = y + 2; // Makes the game much faster
         //Log.d("vasanth","x is " + x);
         if(x >= screenwidth || x <= 0){
             direction = direction * -1;
@@ -79,6 +80,7 @@ public class Ship {
             if(x <= 0 ){
                 x = 10;
             }
+
             y = y + 10;
 
         }
