@@ -22,6 +22,7 @@ import java.util.List;
 class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
     public FireThread mythread = null;
+    public boolean DEBUGSCREEN = true;
     class FireThread extends Thread {
         boolean running = true;
         SurfaceHolder myholder;
@@ -82,13 +83,17 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         float x=10,y=50;
-        public void fireBullet(){
+        public boolean fireBullet(){
+            //if we did fire the bullet then we return true
+            boolean retval = false;
             if(bullet == null || bullet.isAlive() == false ) {
                 bullet = new Bullet(screenheight, screenwidth);
                 synchronized (bullets) {
                     bullets.add(bullet);
+                    retval = true;
                 }
             }
+            return retval;
         }
         GunShip gun = null;
         private Bullet bullet = null;
@@ -108,6 +113,10 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             gun.drawGun(mycanvas);
 
             mycanvas.drawText("Score : "+score,screenwidth-150,screenheight-100,white);
+            if(DEBUGSCREEN){
+                mycanvas.drawText("width : " + screenwidth , screenwidth - 200, screenheight - 200, white);
+                mycanvas.drawText("height : " + screenheight , screenwidth - 200, screenheight - 300, white);
+            }
             //mycanvas.drawText("Score : "+score,
             ArrayList<Ship> deadShips = new ArrayList<Ship>();
             ArrayList<Bullet> deadBullets = new ArrayList<Bullet>();
@@ -121,6 +130,7 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
                     white.setTextSize(50);
                     mycanvas.drawRect(0,0,screenwidth,screenheight,black);
                     mycanvas.drawText("Game Over", screenwidth/3,screenheight/2,white);
+                    mycanvas.drawText("Score : "+ score ,screenwidth/3,screenheight/2-100,white);
                     mythread.stopwork();
 
                 }

@@ -38,6 +38,8 @@ MySurface mySurface;
         dialog.setInverseBackgroundForced(false);
         dialog.show();*/
         soundIds[0] = sp.load(this, R.raw.gun_fire_p90, 1);
+
+
         mySurface = new MySurface(this);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //setContentView(R.layout.activity_flinger);
@@ -68,8 +70,10 @@ MySurface mySurface;
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 //Log.i("vasanth","down");
-                mySurface.mythread.fireBullet();
-                sp.play(soundIds[0], 1, 1, 1, 0, 1.0f);
+                if(mySurface.mythread.fireBullet()) {
+                    sp.play(soundIds[0], 1, 1, 1, 0, 1.0f);
+                }
+
                 break;
 
             case MotionEvent.ACTION_UP:

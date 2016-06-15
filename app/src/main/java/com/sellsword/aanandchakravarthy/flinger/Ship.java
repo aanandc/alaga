@@ -14,14 +14,19 @@ public class Ship {
     float x,y;
 
     boolean dead = false;
-    int screenheight,screenwidth;
-    int size = 5;
+    int  screenheight,screenwidth;
+    int size;
     private boolean readyForNext = true;
     public Ship(int sheight,int swidth){
         x = 10;
         y = 50;
         screenheight = sheight;
         screenwidth = swidth;
+        size =  Math.round((5f * (float)(screenheight+screenwidth)/(float)(RefSize.width+RefSize.height)));
+        if(size == 0){
+            size = 5;
+        }
+        Log.d("vasanth"," size is " + size);
     }
     int direction = 1;
     private void drawShip(Canvas mycanvas, float x, float y, Paint scolor, int size){
@@ -40,8 +45,9 @@ public class Ship {
         //Rect bulletRect = new Rect(b.x,b.y,b.x+1,b.y+1);
         Rect spaceRect = new Rect((int)x-(2*size),(int)y-(2*size),(int)x+(2*size),(int)y+(2*size));
 
+
         if(spaceRect.intersect(bulletRect)) {
-            Log.d("vasanth","collided");
+            //Log.d("vasanth","collided");
             b.killbullet();
             return true;
         }
@@ -70,9 +76,10 @@ public class Ship {
                 }
             }
         }
-        x = x + (direction * 10);
-        y = y + 2; // Makes the game much faster
-        //Log.d("vasanth","x is " + x);
+        x = x + (direction * (10f * (float)screenwidth/(float)RefSize.width));
+
+        y = y + (2f*(float)screenheight/(float)RefSize.height); // Makes the game much faster
+        //Log.d("vasanth","x is " + x  +  "  y is " + y);
         if(x >= screenwidth || x <= 0){
             direction = direction * -1;
             if(x >= screenwidth) {
