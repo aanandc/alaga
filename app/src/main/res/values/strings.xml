@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Alaga</string>
+    <string name="tap_text">Tap to start</string>
 </resources>

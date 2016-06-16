@@ -1,6 +1,8 @@
 package com.sellsword.aanandchakravarthy.flinger;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -22,13 +24,17 @@ import java.util.List;
 class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
     public FireThread mythread = null;
+    public boolean threadStarted = false;
     public boolean DEBUGSCREEN = true;
+    int screenheight;
+    int screenwidth;
+    long oldtime = 0;
+
     class FireThread extends Thread {
         boolean running = true;
         SurfaceHolder myholder;
         Context myContext;
-        int screenheight;
-        int screenwidth;
+
         int score=0;
 
         private Bitmap mBackgroundImage;
@@ -44,24 +50,25 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             ships.add(tempship);
             myholder = sholder;
             myContext = context;
-            //mBackgroundImage = BitmapFactory.decodeResource(context.getResources(),
-            //        R.drawable.earthrise);
+
         }
         public void startwork(){
-
             running = true;
         }
+
         public void stopwork(){
 
             running = false;
         }
+
         Ship tempship;
         @Override
         public void run() {
 
+
             while(running){
                 if(!myholder.getSurface().isValid()) {
-                   Log.d("vasanth","surface is not valid");
+
                     continue;
                 }
                 Canvas c = null;
@@ -86,8 +93,12 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         public boolean fireBullet(){
             //if we did fire the bullet then we return true
             boolean retval = false;
-            if(bullet == null || bullet.isAlive() == false ) {
-                bullet = new Bullet(screenheight, screenwidth);
+            long currtime = System.currentTimeMillis();
+            if((bullet == null || bullet.isAlive() == false) && (oldtime == 0 || currtime - oldtime >= gun.gunCoolDownTime) ) {
+                oldtime = currtime;
+                gun.lastFired = currtime ;
+                //modify gun.y so that the bullet starts from the tip of the gun
+                bullet = new Bullet(screenheight, screenwidth,(int)gun.x,(int)gun.y);
                 synchronized (bullets) {
                     bullets.add(bullet);
                     retval = true;
@@ -110,7 +121,7 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             //mycanvas.drawBitmap(mBackgroundImage, 0, 0, null);
             //Log.d("vasanth","screenheight is " + screenheight + "screenwidth is " + screenwidth);
             mycanvas.drawRect(0,0,screenwidth,screenheight,black);
-            gun.drawGun(mycanvas);
+            gun.moveAndDrawGun(mycanvas);
 
             mycanvas.drawText("Score : "+score,screenwidth-150,screenheight-100,white);
             if(DEBUGSCREEN){
@@ -123,8 +134,6 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             synchronized (ships) {
             for(Ship s:ships) {
                 s.moveShipAndDraw(mycanvas,bullets);
-
-
                 if(s.y > screenheight){
                     //Game over
                     white.setTextSize(50);
@@ -141,7 +150,6 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             }
                 score = score + deadShips.size();
                 ships.removeAll(deadShips);
-                //Log.d("vasanth","ships size " + ships.size());
                 if(ships.size() == 0 ){
                     ships.add(new Ship(screenheight,screenwidth));
                 }
@@ -166,12 +174,7 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
                     ships.add(newship);
                 }
             }
-            //mycanvas.save();
-
-            //drawShip(mycanvas,x,y,circlePaint,10);
-
-
-            x++;
+             x++;
             if(x>screenwidth) {
                 x = 0;
                 y = y + 100;
@@ -181,7 +184,6 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //y++;
         }
 
 
@@ -192,15 +194,31 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
         mycontext = context;
-       //
+        mythread = new FireThread(holder,mycontext);
+
+    }
+
+    private void startLoadingActivity(){
+        Intent loadingIntent = new Intent();
+        loadingIntent.setClass(mycontext,LoadingActivity.class);
+        mycontext.startActivity(loadingIntent);
+
+    }
+
+
+
+    @Override
+    protected void onAttachedToWindow (){
+        super.onAttachedToWindow();
+        Log.d("vasanth","surface attached");
+        startThread();
+
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.d("vasanth","surface created");
-        mythread = new FireThread(holder,mycontext);
-        mythread.startwork();
-        mythread.start();
+
     }
 
     @Override
@@ -217,4 +235,11 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             e.printStackTrace();
         }
     }
+
+    public void startThread(){
+
+        mythread.startwork();
+        mythread.start();
+    }
+
 }

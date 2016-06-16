@@ -57,6 +57,7 @@ public class Ship {
     }
 
     public boolean readyForNextShip(){
+        //comparison value must be based also upon screen density :-(
        if (y > 100 && x > screenwidth/2 && readyForNext){
            readyForNext = false;
            return true;

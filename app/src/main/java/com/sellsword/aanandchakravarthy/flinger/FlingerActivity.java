@@ -3,6 +3,7 @@ package com.sellsword.aanandchakravarthy.flinger;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -16,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class FlingerActivity extends Activity {
+
     AudioAttributes attrs = new AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_GAME)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -25,21 +27,14 @@ public class FlingerActivity extends Activity {
             .setAudioAttributes(attrs)
             .build();
     int soundIds[] = new int[10];
-
+boolean loadActivity = false;
 //TODO when activity is paused, pause the thread also
 MySurface mySurface;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*ProgressDialog dialog=new ProgressDialog(this);
-        dialog.setMessage("loading in progress");
-        dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
-        dialog.show();*/
         soundIds[0] = sp.load(this, R.raw.gun_fire_p90, 1);
-
-
         mySurface = new MySurface(this);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //setContentView(R.layout.activity_flinger);
@@ -48,21 +43,44 @@ MySurface mySurface;
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(mySurface);
         Log.d("vasanth","oncreate completed");
+        startLoadingActivity();
         //dialog.hide();
     }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+
+    }
+
     @Override
     protected void onResume(){
         super.onResume();
         Log.d("vasanth","onresume activity");
-        /*if(mySurface.mythread == null){
-            mythread = new Thread();
-        }*/
+
+    }
+
+    protected void onDestroy(){
+        super.onDestroy();
+        sp.release();
     }
     @Override
     protected void onPause(){
         super.onPause();
-        mySurface.mythread.stopwork();
-        sp.release();
+        if(mySurface.mythread != null && mySurface.mythread.isAlive()) {
+            mySurface.mythread.stopwork();
+        }
+
+
+    }
+
+    private void startLoadingActivity(){
+        Intent loadingIntent = new Intent();
+        loadingIntent.setClass(this,LoadingActivity.class);
+        this.startActivityForResult(loadingIntent,10);//dummy value
+
+
+
     }
 
     @Override
@@ -70,8 +88,12 @@ MySurface mySurface;
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 //Log.i("vasanth","down");
+
                 if(mySurface.mythread.fireBullet()) {
                     sp.play(soundIds[0], 1, 1, 1, 0, 1.0f);
+                }
+                else{
+                    return false;
                 }
 
                 break;
@@ -84,6 +106,21 @@ MySurface mySurface;
                 break;
         }
              return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //startThread();
+
+    }
+
+    public void startThread(){
+        Log.d("aanand","code comes here too...");
+        mySurface.mythread.startwork();
+        mySurface.mythread.start();
     }
 
 

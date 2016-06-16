@@ -9,12 +9,13 @@ import android.graphics.Paint;
 public class Bullet {
 
     int x,y;
+
     boolean alive = true;
 
     int size = 10;
-    public Bullet(int sheight,int swidth){
-        y = sheight - 10;//10 hard coded to be changed based on the GUN size
-        x = swidth / 2;
+    public Bullet(int sheight,int swidth,int newx, int newy){
+        y = newy;//10 hard coded to be changed based on the GUN size
+        x = newx;
         alive = true;
     }
 
