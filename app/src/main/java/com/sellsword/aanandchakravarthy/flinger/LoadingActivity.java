@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 public class LoadingActivity extends Activity {
     String loading_msg[] = new String[]{"prepare to fight","be ready to blast alien scum","precision helps",
-             "kill them all",
-            "fight like vasanth the beerangi"};
+            "kill them all", "Never stop fighting", "Hey little fighter, things will get brighter",
+            "Fight club", "Keep calm and fight on", "True love is a tight hug after a fight"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
