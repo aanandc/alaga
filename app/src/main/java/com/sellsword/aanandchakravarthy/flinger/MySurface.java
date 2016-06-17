@@ -3,6 +3,7 @@ package com.sellsword.aanandchakravarthy.flinger;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,6 +15,7 @@ import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,6 +90,18 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
                         myholder.unlockCanvasAndPost(c);
                     }
                 }
+            }
+            saveHighScore();
+        }
+
+        // Call this method in the game end
+        private void saveHighScore() {
+            SharedPreferences sharedPreferences = myContext.getSharedPreferences(
+                    StartScreenActivity.LABEL_ALAGA_SP, Context.MODE_PRIVATE);
+            if(sharedPreferences.getInt(myContext.getString(R.string.saved_high_score), score) < score) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(myContext.getString(R.string.saved_high_score), score);
+                editor.apply();
             }
         }
 
