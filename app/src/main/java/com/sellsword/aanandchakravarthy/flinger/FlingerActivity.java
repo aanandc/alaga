@@ -197,7 +197,20 @@ MySurface mySurface;
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
+        //float distanceX = e2.getX() - e1.getX();
+        //float distanceY = e2.getY() - e1.getY();
+        Log.d("aanand","on fling operation");
+
+            if (distanceX > 0) {
+                //swipe right
+                mySurface.moveGunLeft(distanceX);
+            }
+            else{
+                //swipe left
+                mySurface.moveGunRight(-1*distanceX);
+            }
+            return true;
+
     }
 
     @Override
@@ -207,20 +220,6 @@ MySurface mySurface;
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        float distanceX = e2.getX() - e1.getX();
-        float distanceY = e2.getY() - e1.getY();
-        Log.d("aanand","on fling operation");
-        if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > 100 && Math.abs(velocityX) > 100) {
-            if (distanceX > 0) {
-                //swipe right
-                mySurface.moveGunRight(distanceX);
-            }
-            else{
-                //swipe left
-                mySurface.moveGunLeft(-1*distanceX);
-            }
-            return true;
-        }
         return false;
     }
 }
