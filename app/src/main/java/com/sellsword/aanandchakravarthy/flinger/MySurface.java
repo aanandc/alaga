@@ -26,9 +26,11 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
     public FireThread mythread = null;
     public boolean threadStarted = false;
     public boolean DEBUGSCREEN = true;
+    public boolean gameover = false;
     int screenheight;
     int screenwidth;
     long oldtime = 0;
+    int bullets_fired = 0;
 
     class FireThread extends Thread {
         boolean running = true;
@@ -97,6 +99,7 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             if((bullet == null || bullet.isAlive() == false) && (oldtime == 0 || currtime - oldtime >= gun.gunCoolDownTime) ) {
                 oldtime = currtime;
                 gun.lastFired = currtime ;
+                bullets_fired++;
                 //modify gun.y so that the bullet starts from the tip of the gun
                 bullet = new Bullet(screenheight, screenwidth,(int)gun.x,(int)gun.y);
                 synchronized (bullets) {
@@ -140,6 +143,9 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
                     mycanvas.drawRect(0,0,screenwidth,screenheight,black);
                     mycanvas.drawText("Game Over", screenwidth/3,screenheight/2,white);
                     mycanvas.drawText("Score : "+ score ,screenwidth/3,screenheight/2-100,white);
+                    Log.d("aanand","bullets fired : " + bullets_fired);
+                    mycanvas.drawText("Accuracy : " + Math.round((float)score/(float)bullets_fired*100f) + " %",screenwidth/3,screenheight/2-200,white);
+                    gameover = true;
                     mythread.stopwork();
 
                 }

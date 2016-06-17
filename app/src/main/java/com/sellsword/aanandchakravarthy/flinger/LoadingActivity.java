@@ -6,13 +6,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.TextView;
 
 public class LoadingActivity extends Activity {
-
+    String loading_msg[] = new String[]{"prepare to fight","be ready to blast alien scum","precision helps",
+             "kill them all",
+            "fight like vasanth the beerangi"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
+        TextView loadingText = (TextView)findViewById(R.id.textLoadingMessage);
+        long val = System.currentTimeMillis()%(long)(loading_msg.length);
+        loadingText.setText(loading_msg[(int)val]);
     }
 
     @Override
