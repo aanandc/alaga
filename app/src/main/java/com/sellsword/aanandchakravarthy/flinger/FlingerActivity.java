@@ -12,6 +12,7 @@ import android.media.SoundPool;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -19,7 +20,9 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class FlingerActivity extends Activity {
+public class FlingerActivity extends Activity implements
+        GestureDetector.OnGestureListener {
+    private GestureDetector mDetector;
 
     AudioAttributes attrs = new AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_GAME)
@@ -46,6 +49,7 @@ MySurface mySurface;
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(mySurface);
         Log.d("vasanth","oncreate completed");
+        mDetector = new GestureDetector(this,this);
         startLoadingActivity();
         //dialog.hide();
     }
@@ -88,7 +92,9 @@ MySurface mySurface;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch(event.getAction()){
+        mDetector.onTouchEvent(event);
+        return true;
+        /*switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 //Log.i("vasanth","down");
 
@@ -108,7 +114,7 @@ MySurface mySurface;
                 //Log.i("vasanth","move");
                 break;
         }
-             return true;
+             return true;*/
     }
 
     @Override
@@ -167,6 +173,56 @@ MySurface mySurface;
     };
 
 
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return true;
+
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        if(mySurface.mythread.fireBullet()) {
+            sp.play(soundIds[0], 1, 1, 1, 0, 1.0f);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        float distanceX = e2.getX() - e1.getX();
+        float distanceY = e2.getY() - e1.getY();
+        Log.d("aanand","on fling operation");
+        if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > 100 && Math.abs(velocityX) > 100) {
+            if (distanceX > 0) {
+                //swipe right
+                mySurface.moveGunRight(distanceX);
+            }
+            else{
+                //swipe left
+                mySurface.moveGunLeft(-1*distanceX);
+            }
+            return true;
+        }
+        return false;
+    }
 }
 
 

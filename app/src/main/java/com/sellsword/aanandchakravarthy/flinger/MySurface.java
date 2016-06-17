@@ -232,6 +232,13 @@ class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
+    public void moveGunRight(float distance){
+        mythread.gun.moveGunRight(distance);
+    }
+    public void moveGunLeft(float distance){
+        mythread.gun.moveGunLeft(distance);
+    }
+
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
        mythread.stopwork();

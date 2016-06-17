@@ -50,8 +50,20 @@ public class GunShip extends Ship {
                 x = 10;
             }
         }
-        x = x + (direction * Math.round(5f * (float)screenwidth/(float)RefSize.width));
+        //x = x + (direction * Math.round(5f * (float)screenwidth/(float)RefSize.width));
         drawShip(mycanvas,x,y,size);
+    }
+    public void moveGunRight(float distance){
+        x = x + distance;
+        if (x >= screenwidth){
+            x = screenwidth - 10;
+        }
+    }
+    public void moveGunLeft(float distance){
+        x = x - distance;
+        if (x <= 0) {
+            x = 10;
+        }
     }
 
 }
